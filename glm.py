@@ -75,6 +75,8 @@ class GithubLabelMaker:
     def add_label(self, label_def):
         name, color, description, *_ = self._get_label_properties(label_def)
         logging.info("adding label '{0}'".format(name))
+        if description == None:
+            description = github.GithubObject.NotSet
         self._repo.create_label(name, color, description)
 
     def add_labels(self, labels_def):
@@ -113,7 +115,8 @@ class GithubLabelMaker:
             label = self._find_label(name)
             if label:
                 logging.info("editing label '{0}'".format(name))
-
+        if description == None:
+            description=github.GithubObject.NotSet
         if label:
             label.edit(name, color, description)
             return True
@@ -139,6 +142,7 @@ class GithubLabelMaker:
         labels_def = []
         repo_labels = self._repo.get_labels()
         for label in repo_labels:
+            print(label.description)
             label_def = { "name" : label.name, "color": "#{0}".format(label.color) }
             if label.description is not github.GithubObject.NotSet:
                 label_def['description'] = label.description
